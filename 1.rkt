@@ -1,0 +1,98 @@
+#lang racket
+
+; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Utility Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+; returns true iff the given collection contains the given item as an element
+(define contains (lambda
+                   (collection item)
+                   (if (empty? collection)
+                       #f
+                       (if (equal? (car collection) item)
+                           #t
+                           (contains (cdr collection) item))
+                       )
+                   ))
+
+
+; removes elemets from the collection, until the predicate returns false for an element
+(define remove-while (lambda
+                         (collection predicate)
+                       (if (empty? collection)
+                           '()
+                           (if (predicate (car collection))
+                               (remove-while (cdr collection) predicate)
+                               collection
+                               )
+                           )))
+
+(provide contains remove-while)
+
+
+
+; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Question 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(define vowels '(a e i o u))
+(define vowel? (lambda(char)(contains vowels char)))
+
+(define skip-vowel-prefix (lambda
+                             (word)
+                            (remove-while word (lambda (char)(vowel? char)))
+                            ))
+
+(define count-syllables (lambda
+                          (word)
+                          (if (empty? word)
+                              0
+                              (if (vowel? (car word))
+                              (+ (count-syllables(skip-vowel-prefix word)) 1)
+                              (count-syllables(cdr word))
+                                        ))
+                          ))
+(provide count-syllables)
+
+; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Question 2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(define sorted? (lambda
+                    (collection comparator)
+                  ; If the list is of size 0 or 1, it is ordered (as there are no 2 elements who break the order)
+                  (if (or (empty? collection) (empty? (cdr collection))) 
+                      #t
+                      (if (comparator (car collection) (cadr collection))
+                          (sorted? (cdr collection) comparator)
+                          #f
+                  ))))
+(provide sorted?)
+
+; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Question 3 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(define merge-helper (lambda (list1 list2)
+                 (if (empty? list1)
+                     list2
+                 (if (empty? list2)
+                     list1
+                 (if (< (car list1) (car list2))
+                      (cons (car list1) (merge-helper (cdr list1) list2))
+                      (cons (car list2) (merge-helper list1 (cdr list2)))
+                      )))))
+
+(define merge (lambda
+                  (list1 list2)
+                (if (not (and (sorted? list1 <) (sorted? list2 <)))
+                    (raise (make-exn:fail "unordered input lists" (current-continuation-marks)))
+                (merge-helper list1 list2)
+                )))
+
+(provide merge)
+
+; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Question 4 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(define remove-adjacent-duplicates (lambda
+                                       (list)
+                                     (if (empty? list)
+                                         '()
+                                      (if (empty? (cdr list))
+                                          list
+                                         (let ([list-unsequenced (remove-adjacent-duplicates (cdr list))])
+                                               (if (equal? (car list) (car list-unsequenced))
+                                                   list-unsequenced
+                                                   (cons (car list) list-unsequenced)
+                                                   )))
+                                         )))
+
+(provide remove-adjacent-duplicates)
