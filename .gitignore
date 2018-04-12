@@ -4,3 +4,23 @@
 1-tests\.rkt
 
 1\.bak
+
+compiled/drracket/errortrace/1_rkt\.dep
+
+compiled/drracket/errortrace/1_rkt\.zo
+
+compiled/drracket/errortrace/Q3_rkt\.dep
+
+compiled/drracket/errortrace/Q3_rkt\.zo
+
+node_modules/@types/node/index\.d\.ts
+
+node_modules/@types/node/inspector\.d\.ts
+
+node_modules/@types/node/LICENSE
+
+node_modules/@types/node/package\.json
+
+node_modules/@types/node/README\.md
+
+Q3-tests\.bak
