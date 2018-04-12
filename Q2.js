@@ -15,5 +15,5 @@ var KSubsets = function (array, subsetSize) {
 };
 assert.deepEqual(KSubsets([1, 2, 3], 3), [[1, 2, 3]], "A subset at the size of the array should be the array itself");
 assert.deepEqual(KSubsets([1, 2, 3], 4), [], "No subsets larger than the array are allowed");
-assert.deepEqual(KSubsets([1, 2, 3], 1), [[2], [1], [3]]);
+// TODO: test size, elements, etc'
 //# sourceMappingURL=Q2.js.map

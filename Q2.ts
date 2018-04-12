@@ -128,6 +128,7 @@ const AllSubsets :( array : any[]) => any[][] = (array) =>{
 console.log(AllSubsets([1,2,3]))
 assert.deepEqual(KSubsets([1, 2, 3], 3), [[1, 2, 3]], "A subset at the size of the array should be the array itself")
 assert.deepEqual(KSubsets([1, 2, 3], 4), [], "No subsets larger than the array are allowed")
+// TODO: test size, elements, etc'
 
 
 
