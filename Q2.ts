@@ -1,5 +1,4 @@
 const assert = require('assert');
-const Map = require('Map');
 
 interface BinTree {
     root: number;
@@ -166,11 +165,12 @@ const getBoxarts:( movieLists:movieList[]) => {id: string, title: string ,boxart
   //  return filteredVideos.map((video)=> {id : video.id ; title : video.title; boxart: video.boxart.url})
  
     let boxarts = flatmap((video: video)=> video.boxarts.map((boxart)=>
-        new Map([['id', video.id],['title', video.title], ['boxart', boxart]]) ), videos)
-    
+     ({id: video.id, title: video.title, boxart: boxart}))
+    , videos)
+        
     let filteredBoxarts = boxarts.filter((video)=>video.boxart.width == 150 && video.boxart.height == 200)
     return filteredBoxarts.map((video)=> 
-        new Map([['id', video.id],['title', video.title], ['boxart', video.boxart.url]]))
+        ({id: video.id, title:video.title, boxart: video.boxart.url}))
 }
 
 let movieLists = [
