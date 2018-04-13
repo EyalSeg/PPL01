@@ -82,14 +82,7 @@ const GBinTreePostArray :<T> (tree : GBinTree<T>) => T[] = (tree) => {
     return leftVisit.concat(rightVisit).concat([tree.root])
 };
 
-
-
-// if this line fails, run the following in the terminal: npm install @types/node --save-dev
-
-
-
-
-const KSubsets : (array: any[], subsetSize : number) => any[][]= (array, subsetSize) => {
+const KSubsets : <T>(array: any[], subsetSize : number) => T[][]= (array, subsetSize) => {
     if (array.length < subsetSize) //check in Forum
         return []
 
@@ -108,7 +101,7 @@ const KSubsets : (array: any[], subsetSize : number) => any[][]= (array, subsetS
     return takeCurrentItem.concat(skipCurrentItem)
 }
 
-const AllSubsets :( array : any[]) => any[][] = (array) =>{
+const AllSubsets : <T>( array : T[]) => T[][] = (array) =>{
     if (array.length == 0)
         return [[]]
 
@@ -121,21 +114,19 @@ const AllSubsets :( array : any[]) => any[][] = (array) =>{
     return skipCurrentItem.concat(takeCurrentItem)
 }
 
-
-
-
-console.log(AllSubsets([1,2,3]))
 assert.deepEqual(KSubsets([1, 2, 3], 3), [[1, 2, 3]], "A subset at the size of the array should be the array itself")
 assert.deepEqual(KSubsets([1, 2, 3], 4), [], "No subsets larger than the array are allowed")
 // TODO: test size, elements, etc'
 
 
 
-const flatmap :(func : Function  , array: any) => any[] = (func , array) => {
-    return array.map(func).reduce((acc,curVal)=> acc.concat(curVal),[])
+const flatmap : <T1, T2>(func : (value : T1) => T2  , array: T1[][])=> T2[] = (func , array) => {
+    return array.map((subarray) => subarray.map(func))
+        .reduce((acc,curVal)=> acc.concat(curVal),[])
 }
 
-console.log(flatmap((x) => x[0], [[[1,2], [3,4]], [[5,6], [7,8]]]))
+console.log(flatmap((x) => x.toUpperCase(), [['a', 'b'] ,[ 'c', 'd']]))
+console.log(flatmap((x) => x[0].toString(), [[[1,2], [3,4]], [[5,6], [7,8]]]))
 
 
 interface boxart {
@@ -156,19 +147,14 @@ interface movieList {
    videos : video[] ;
 };
 
-const getBoxarts:( movieLists:movieList[]) => {id: string, title: string ,boxart: string}[] = (movieLists)=>{
-    let videos = flatmap((movieList) => movieList.videos, movieLists) //videos array
-   // let allVideos = flatmap((video: video)=> video.boxarts.map((boxart)=>
-   // {id: video.id; title: video.title; boxart : boxart}),
-  //   videos)
-  //  let filteredVideos = allVideos. .filter((video)=>video.boxart.width == 50 && video.boxart.height == 150)
-  //  return filteredVideos.map((video)=> {id : video.id ; title : video.title; boxart: video.boxart.url})
- 
-    let boxarts = flatmap((video: video)=> video.boxarts.map((boxart)=>
-     ({id: video.id, title: video.title, boxart: boxart}))
-    , videos)
-        
-    let filteredBoxarts = boxarts.filter((video)=>video.boxart.width == 150 && video.boxart.height == 200)
+const getBoxarts:(movieLists:movieList[]) => {id: number, title: string ,boxart: string}[] = (movieLists)=>{
+    let movieCollections = movieLists.map((movieList) => movieList.videos)
+    let videos = flatmap((movie) => movie, movieCollections)
+    let boxarts = videos.map((video) => video.boxarts.map((boxart) => ({id: video.id, title: video.title, boxart: boxart})))
+    let boxarts_flattened = flatmap((x) => x, boxarts)
+
+    let filteredBoxarts = boxarts_flattened.filter((video)=>video.boxart.width == 150 && video.boxart.height == 200)
+
     return filteredBoxarts.map((video)=> 
         ({id: video.id, title:video.title, boxart: video.boxart.url}))
 }
