@@ -1,4 +1,9 @@
+import { type } from "os";
 const assert = require('assert');
+//const map = require('map')
+
+let str1 = "1"
+let str2 = 1
 
 interface BinTree {
     root: number;
@@ -7,8 +12,13 @@ interface BinTree {
 };
 
 
+let child : {children: [{name: string},{age: number}]} = {children: [{name: 'john'}, {age:12}, {name: 'john'}, {name: 'john'}, {name: 'john'}, {name: 'john'}]}
+//let a : {children: ({name : string} | {age: number})[]} = {children: [{name:"1"}, {age:22}, {name:"2"}]} 
+type doubleFunc<T> = {<T>(x : T):T }
+//let bb : {<T>(x : doubleFunc<T>, l : T[]): T[] } = (f, l) => map((x)=>f(f(x)), l);
+
 const TreePreArray : (tree : BinTree) => number[] = (tree) => {
-    if (tree === null)
+    if (tree == undefined)
         return []
     
     let leftVisit = (tree.left !== undefined ? TreePreArray(tree.left) : [] )
@@ -18,21 +28,21 @@ const TreePreArray : (tree : BinTree) => number[] = (tree) => {
 };
 
 const TreeInArray : (tree : BinTree) => number[] = (tree) => {
-    if (tree === null)
+    if (tree == undefined)
         return []
     
-    let leftVisit = (tree.left !== undefined ? TreePreArray(tree.left) : [] )
-    let rightVisit = (tree.right !== undefined ? TreePreArray(tree.right) : [] )     
+    let leftVisit = (tree.left != undefined ? TreePreArray(tree.left) : [] )
+    let rightVisit = (tree.right != undefined ? TreePreArray(tree.right) : [] )     
     
     return leftVisit.concat([tree.root]).concat(rightVisit)
 };
 
 const TreePostArray : (tree : BinTree) => number[] = (tree) => {
-    if (tree === null)
+    if (tree == undefined)
         return []
     
-    let leftVisit = (tree.left !== undefined ? TreePreArray(tree.left) : [] )
-    let rightVisit = (tree.right !== undefined ? TreePreArray(tree.right) : [] )     
+    let leftVisit = (tree.left != undefined ? TreePreArray(tree.left) : [] )
+    let rightVisit = (tree.right != undefined ? TreePreArray(tree.right) : [] )     
     
     return leftVisit.concat(rightVisit).concat([tree.root])
 };
@@ -40,6 +50,8 @@ const TreePostArray : (tree : BinTree) => number[] = (tree) => {
 
 let myTree = {root:10, left :{root:5}, right : {root:3} }
 console.log(TreePreArray(myTree))
+console.log(TreePreArray(null))
+console.log(TreePreArray(undefined))
 
 
 //TO DO: tests
@@ -53,31 +65,31 @@ interface GBinTree<T> {
 
 
 const GBinTreePreArray: <T>(tree : GBinTree<T>) => T[] = (tree) => {
-    if (tree === null)
+    if (tree == undefined)
         return []
     
-    let leftVisit = (tree.left !== undefined ? GBinTreePreArray(tree.left) : [] )
-    let rightVisit = (tree.right !== undefined ? GBinTreePreArray(tree.right) : [] )     
+    let leftVisit = (tree.left != undefined ? GBinTreePreArray(tree.left) : [] )
+    let rightVisit = (tree.right != undefined ? GBinTreePreArray(tree.right) : [] )     
     
     return [tree.root].concat(leftVisit).concat(rightVisit)
 };
 
 const GBinTreeInArray : <T>(tree : GBinTree<T>) => T[] = (tree) => {
-    if (tree === null)
+    if (tree == undefined)
         return []
     
-    let leftVisit = (tree.left !== undefined ? GBinTreeInArray(tree.left) : [] )
-    let rightVisit = (tree.right !== undefined ? GBinTreeInArray(tree.right) : [] )     
+    let leftVisit = (tree.left != undefined ? GBinTreeInArray(tree.left) : [] )
+    let rightVisit = (tree.right != undefined ? GBinTreeInArray(tree.right) : [] )     
     
     return leftVisit.concat([tree.root]).concat(rightVisit)
 };
 
 const GBinTreePostArray :<T> (tree : GBinTree<T>) => T[] = (tree) => {
-    if (tree === null)
+    if (tree == undefined)
         return []
     
-    let leftVisit = (tree.left !== undefined ? GBinTreePostArray(tree.left) : [] )
-    let rightVisit = (tree.right !== undefined ?  GBinTreePostArray(tree.right) : [] )     
+    let leftVisit = (tree.left != undefined ? GBinTreePostArray(tree.left) : [] )
+    let rightVisit = (tree.right != undefined ?  GBinTreePostArray(tree.right) : [] )     
     
     return leftVisit.concat(rightVisit).concat([tree.root])
 };
