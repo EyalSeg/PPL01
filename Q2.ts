@@ -175,7 +175,6 @@ let myTree14 = {root:'a',
 
 //TESTS
 //Tests Pre Order Traversal
-console.log(GBinTreePreArray(myTree8))
 assert.deepEqual(GBinTreePreArray(myTree8),[ 'a', 'b', 'd', 'c', 'e', 'f', 'g', 'h'], 
                 "failed - the printed array is not in the correct order")
 assert.deepEqual(GBinTreePreArray(myTree9),[], "failed - pre order traversal on undefined should be []")
@@ -321,12 +320,22 @@ interface movieList {
 // returns a map {id, title, boxart} for every video in the movieLists
 // such that the boxart property in the result will be the url of the boxart object with dimensions of 150x200px.
 const getBoxarts:(movieLists:movieList[]) => {id: number, title: string ,boxart: string}[] = (movieLists)=>{
-    let movieCollections = movieLists.map((movieList) => movieList.videos)
-    let videos = flatmap((movie) => movie, movieCollections)
-    let boxarts = videos.map((video) => video.boxarts.map((boxart) => ({id: video.id, title: video.title, boxart: boxart})))
-    let boxarts_flattened = flatmap((x) => x, boxarts)
+    if (isNullOrUndefined(movieLists))
+        return []
 
-    let filteredBoxarts = boxarts_flattened.filter((video)=>video.boxart.width == 150 && video.boxart.height == 200)
+    let movieCollections = movieLists.filter((list) => !(isNullOrUndefined(list) || isNullOrUndefined(list.videos)))
+        .map((movieList) => movieList.videos)
+    let videos = flatmap((movie) => movie, movieCollections)
+        .filter((video) => !(isNullOrUndefined(video) || isNullOrUndefined(video.boxarts) ))
+
+    let boxarts = videos.map((video) => video.boxarts
+        .filter((boxart) => !isNullOrUndefined(boxart))
+        .map((boxart) => ({id: video.id, title: video.title, boxart: boxart})))
+    let boxarts_flattened = flatmap((x) => x, boxarts)
+        
+    let filteredBoxarts = boxarts_flattened
+        .filter((video)=> !isNullOrUndefined(video))
+        .filter((video)=> video.boxart.width == 150 && video.boxart.height == 200)
 
     return filteredBoxarts.map((video)=> 
         ({id: video.id, title:video.title, boxart: video.boxart.url}))
@@ -390,9 +399,38 @@ let movieLists = [
                 "bookmark": [{ id: 432534, time: 65876586 }]
             }
         ]
-    }
+    },
 ]
 
-console.log(getBoxarts(movieLists ))
+let boxarts = getBoxarts(movieLists)
+assert.deepEqual(boxarts, 
+    [ { id: 70111470,
+        title: 'Die Hard',
+        boxart: 'http://cdn-0.nflximg.com/images/2891/DieHard150.jpg' },
+      { id: 654356453,
+        title: 'Bad Boys',
+        boxart: 'http://cdn-0.nflximg.com/images/2891/BadBoys150.jpg' },
+      { id: 65432445,
+        title: 'The Chamber',
+        boxart: 'http://cdn-0.nflximg.com/images/2891/TheChamber150.jpg' },
+      { id: 675465,
+        title: 'Fracture',
+        boxart: 'http://cdn-0.nflximg.com/images/2891/Fracture150.jpg' } ])
+
+assert.deepEqual(getBoxarts([]), [], "empty movielist should return no boxarts")
+assert.deepEqual(getBoxarts(null), [], "null movielist should return no boxarts")
+assert.deepEqual(getBoxarts(undefined), [], "undefined movielist should return no boxarts")
+assert.deepEqual(getBoxarts([null]), [], "undefined movie list should return []")
+assert.deepEqual(getBoxarts([undefined]), [], "undefined movie list should return []")
+assert.deepEqual(getBoxarts([{name: 'empty', videos: []}]), [], "empty videos list should return []")
+assert.deepEqual(getBoxarts([{name: 'empty', videos: undefined}]), [], "undefined videos list should return []")
+assert.deepEqual(getBoxarts([{name: 'empty', videos: [undefined]}]), [], "undefined videos list should return []")
+assert.deepEqual(getBoxarts([{name: 'empty', videos: [{id: 1, title:"none", boxarts: undefined}]}]), [], "undefined boxarts list should return []")
+assert.deepEqual(getBoxarts([{name: 'empty', videos: [{id: 1, title:"none", boxarts: []}]}]), [], "empty boxarts list should return []")
+assert.deepEqual(getBoxarts([{name: 'empty', videos: [{id: 1, title:"none", boxarts: [undefined]}]}]), [], "empty boxarts list should return []")
+
+
+console.log("done :)")
+        
 
 
