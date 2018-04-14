@@ -1,6 +1,6 @@
 import { type } from "os";
+import { isNullOrUndefined } from "util";
 const assert = require('assert');
-//const map = require('map')
 
 let str1 = "1"
 let str2 = 1
@@ -11,11 +11,6 @@ interface BinTree {
     right?: BinTree;
 };
 
-
-let child : {children: [{name: string},{age: number}]} = {children: [{name: 'john'}, {age:12}, {name: 'john'}, {name: 'john'}, {name: 'john'}, {name: 'john'}]}
-//let a : {children: ({name : string} | {age: number})[]} = {children: [{name:"1"}, {age:22}, {name:"2"}]} 
-type doubleFunc<T> = {<T>(x : T):T }
-//let bb : {<T>(x : doubleFunc<T>, l : T[]): T[] } = (f, l) => map((x)=>f(f(x)), l);
 
 const TreePreArray : (tree : BinTree) => number[] = (tree) => {
     if (tree == undefined)
@@ -95,7 +90,7 @@ const GBinTreePostArray :<T> (tree : GBinTree<T>) => T[] = (tree) => {
 };
 
 const KSubsets : <T>(array: any[], subsetSize : number) => T[][]= (array, subsetSize) => {
-    if (array.length < subsetSize) //check in Forum
+    if (isNullOrUndefined(array) || array.length < subsetSize || array.length == 0) 
         return []
 
     if (subsetSize == 1)
@@ -114,7 +109,7 @@ const KSubsets : <T>(array: any[], subsetSize : number) => T[][]= (array, subset
 }
 
 const AllSubsets : <T>( array : T[]) => T[][] = (array) =>{
-    if (array.length == 0)
+    if (isNullOrUndefined(array) || array.length == 0)
         return [[]]
 
     let head = array[0]
@@ -126,11 +121,41 @@ const AllSubsets : <T>( array : T[]) => T[][] = (array) =>{
     return skipCurrentItem.concat(takeCurrentItem)
 }
 
-assert.deepEqual(KSubsets([1, 2, 3], 3), [[1, 2, 3]], "A subset at the size of the array should be the array itself")
-assert.deepEqual(KSubsets([1, 2, 3], 4), [], "No subsets larger than the array are allowed")
+const contains = (array, element) => {
+    return array.reduce((accumulator, value) => accumulator || element.toString() == value.toString(), false)
+}
+
 // TODO: test size, elements, etc'
 
+const testSetsEqual : <T>(actual : T[], expected : T[]) => void = (actual, expected)=> {
+    assert.deepEqual(true, actual.length == expected.length, "different amount of subsets found!")
+    
+    expected.forEach((element) =>{
+        let elementContained = contains(actual, element)
 
+        assert.deepEqual(true, elementContained,
+        "subset " + element.toString() + "expected but not found")
+    })
+
+    actual.forEach((element) =>{
+        let elementContained = contains(expected, element)
+
+        assert.deepEqual(true, elementContained,
+        "subset " + element.toString() + "found but not expected")
+    })
+}
+
+assert.deepEqual(KSubsets([1, 2, 3], 3), [[1, 2, 3]], "A subset at the size of the array should be the array itself")
+assert.deepEqual(KSubsets([1, 2, 3], 4), [], "No subsets larger than the array are allowed")
+assert.deepEqual(KSubsets([], 1), [], "Empty set has no subsets")
+assert.deepEqual(KSubsets(undefined, 1), [], "Empty set has no subsets")
+assert.deepEqual(KSubsets([1, 2, 3], 0), [], "No subsets at the size of 0")
+testSetsEqual(KSubsets([1, 2, 3], 2), [[1, 2], [2, 3], [1, 3]])
+
+assert.deepEqual(AllSubsets([1]), [[], [1]], "A set at the the size of 1 has only 1 subset")
+assert.deepEqual(AllSubsets([]), [[]], "Empty set has no subsets")
+assert.deepEqual(AllSubsets(undefined), [[]], "Empty set has no subsets")
+testSetsEqual(AllSubsets([1, 2, 3]), [[], [1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]])
 
 const flatmap : <T1, T2>(func : (value : T1) => T2  , array: T1[][])=> T2[] = (func , array) => {
     return array.map((subarray) => subarray.map(func))
