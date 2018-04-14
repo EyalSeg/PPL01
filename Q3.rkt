@@ -216,6 +216,7 @@ define sorted? (lambda
    (check-equal? (remove-adjacent-duplicates '(1 2 3 3)) '(1 2 3) "remove-adjacent-duplicates: postfix duplicate")
    (check-equal? (remove-adjacent-duplicates '(1 1 1 1 2 3)) '(1 2 3) "remove-adjacent-duplicates: sequence larger than 2")
    (check-equal? (remove-adjacent-duplicates '(1 1 2 3 3 4 4 4 4)) '(1 2 3 4) "remove-adjacent-duplicates: mixed case")
+   (check-equal? (remove-adjacent-duplicates '(yeah yeah yeah)) '(yeah) "remove-adjacent-duplicates: strings")
    ))
 
 (run-tests q4-tests)
