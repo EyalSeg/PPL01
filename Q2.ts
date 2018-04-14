@@ -11,7 +11,7 @@ interface BinTree {
     right?: BinTree;
 };
 
-
+//returns an array of a pre-order traversal on BinTree
 const TreePreArray : (tree : BinTree) => number[] = (tree) => {
     if (isNullOrUndefined(tree)) //changed this
         return []
@@ -21,7 +21,7 @@ const TreePreArray : (tree : BinTree) => number[] = (tree) => {
     
     return [tree.root].concat(leftVisit).concat(rightVisit)
 };
-
+//returns an array of a in-order traversal on BinTree
 const TreeInArray : (tree : BinTree) => number[] = (tree) => {
     if (isNullOrUndefined(tree))
         return []
@@ -31,7 +31,7 @@ const TreeInArray : (tree : BinTree) => number[] = (tree) => {
     
     return leftVisit.concat([tree.root]).concat(rightVisit)
 };
-
+//returns an array of a post-order traversal on BinTree
 const TreePostArray : (tree : BinTree) => number[] = (tree) => {
     if (isNullOrUndefined(tree))
         return []
@@ -42,7 +42,7 @@ const TreePostArray : (tree : BinTree) => number[] = (tree) => {
     return leftVisit.concat(rightVisit).concat([tree.root])
 };
 
-
+//variable declerations
 let myTree = {root:10,
               left :{root:5,
                      left:{root:8}
@@ -93,7 +93,6 @@ assert.deepEqual(TreeInArray(myTree6),[5, 3], "failed - post order traversal is 
 assert.deepEqual(TreeInArray(myTree7),[1, 5, 3], "failed - post order traversal is not correcrt")
 
 //Tests Post Order Traversal
-
 assert.deepEqual(TreePostArray(myTree),[ 8, 5, 9, 1, 12, 2, 7, 10 ], 
                 "failed - the printed array is not in the correct order")
 assert.deepEqual(TreePostArray(myTree2),[], "failed - post order traversal on undefined should be []")
@@ -111,7 +110,7 @@ interface GBinTree<T> {
     right?: GBinTree<T>;
 };
 
-
+//returns an array of a pre-order traversal on GBinTree
 const GBinTreePreArray: <T>(tree : GBinTree<T>) => T[] = (tree) => {
     if (isNullOrUndefined(tree))
         return []
@@ -122,6 +121,7 @@ const GBinTreePreArray: <T>(tree : GBinTree<T>) => T[] = (tree) => {
     return [tree.root].concat(leftVisit).concat(rightVisit)
 };
 
+//returns an array of a in-order traversal on GBinTree
 const GBinTreeInArray : <T>(tree : GBinTree<T>) => T[] = (tree) => {
     if (isNullOrUndefined(tree))
         return []
@@ -132,6 +132,7 @@ const GBinTreeInArray : <T>(tree : GBinTree<T>) => T[] = (tree) => {
     return leftVisit.concat([tree.root]).concat(rightVisit)
 };
 
+//returns an array of a post-order traversal on GBinTree
 const GBinTreePostArray :<T> (tree : GBinTree<T>) => T[] = (tree) => {
     if (isNullOrUndefined(tree))
         return []
@@ -142,6 +143,7 @@ const GBinTreePostArray :<T> (tree : GBinTree<T>) => T[] = (tree) => {
     return leftVisit.concat(rightVisit).concat([tree.root])
 };
 
+//variables declerations
 let myTree8 = {root:'a',
     left :{root:'b',
            left:{root:'d'}
@@ -171,6 +173,7 @@ let myTree14 = {root:'a',
     }
 
 
+//TESTS
 //Tests Pre Order Traversal
 assert.deepEqual(GBinTreePreArray(myTree8),[ 'a', 'b', 'd', 'c', 'e', 'f', 'g', 'h'], 
                 "failed - the printed array is not in the correct order")
@@ -192,7 +195,6 @@ assert.deepEqual(GBinTreeInArray(myTree13),['a', 'c'], "failed - post order trav
 assert.deepEqual(GBinTreeInArray(myTree14),['b', 'a', 'c'], "failed - post order traversal is not correcrt")
 
 //Tests Post Order Traversal
-
 assert.deepEqual(GBinTreePostArray(myTree8),[ 'd', 'b', 'e', 'g', 'h', 'f', 'c', 'a' ], 
                 "failed - the printed array is not in the correct order")
 assert.deepEqual(GBinTreePostArray(myTree9),[], "failed - post order traversal on undefined should be []")
@@ -202,8 +204,8 @@ assert.deepEqual(GBinTreePostArray(myTree12),['b', 'a'], "failed - post order tr
 assert.deepEqual(GBinTreePostArray(myTree13),['c', 'a'], "failed - post order traversal is not correcrt")
 assert.deepEqual(GBinTreePostArray(myTree14),['b', 'c', 'a'], "failed - post order traversal is not correcrt")
 
-
-const KSubsets : <T>(array: any[], subsetSize : number) => T[][]= (array, subsetSize) => {
+//returns an array with all the subsets of size k of A (each subset will be an array itself).
+const KSubsets : <T>(array: any[], subsetSize : number) => T[][] = (array, subsetSize) => {
     if (isNullOrUndefined(array) || array.length < subsetSize || array.length == 0) 
         return []
 
@@ -222,6 +224,7 @@ const KSubsets : <T>(array: any[], subsetSize : number) => T[][]= (array, subset
     return takeCurrentItem.concat(skipCurrentItem)
 }
 
+//returns an array with all the subsets of A (each subset will be an array itself
 const AllSubsets : <T>( array : T[]) => T[][] = (array) =>{
     if (isNullOrUndefined(array) || array.length == 0)
         return [[]]
@@ -235,12 +238,12 @@ const AllSubsets : <T>( array : T[]) => T[][] = (array) =>{
     return skipCurrentItem.concat(takeCurrentItem)
 }
 
+//checks if an element is contained in an array (for tests)
 const contains = (array, element) => {
     return array.reduce((accumulator, value) => accumulator || element.toString() == value.toString(), false)
 }
 
-// TODO: test size, elements, etc'
-
+//Test method
 const testSetsEqual : <T>(actual : T[], expected : T[]) => void = (actual, expected)=> {
     assert.deepEqual(true, actual.length == expected.length, "different amount of subsets found!")
     
@@ -259,18 +262,24 @@ const testSetsEqual : <T>(actual : T[], expected : T[]) => void = (actual, expec
     })
 }
 
+
+
+//TESTS
 assert.deepEqual(KSubsets([1, 2, 3], 3), [[1, 2, 3]], "A subset at the size of the array should be the array itself")
 assert.deepEqual(KSubsets([1, 2, 3], 4), [], "No subsets larger than the array are allowed")
 assert.deepEqual(KSubsets([], 1), [], "Empty set has no subsets")
 assert.deepEqual(KSubsets(undefined, 1), [], "Empty set has no subsets")
 assert.deepEqual(KSubsets([1, 2, 3], 0), [], "No subsets at the size of 0")
-testSetsEqual(KSubsets([1, 2, 3], 2), [[1, 2], [2, 3], [1, 3]])
+testSetsEqual(KSubsets([1, 2, 3], 2), [[1, 2], [2, 3], [1, 3]]) //function with assert
 
 assert.deepEqual(AllSubsets([1]), [[], [1]], "A set at the the size of 1 has only 1 subset")
 assert.deepEqual(AllSubsets([]), [[]], "Empty set has no subsets")
 assert.deepEqual(AllSubsets(undefined), [[]], "Empty set has no subsets")
-testSetsEqual(AllSubsets([1, 2, 3]), [[], [1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]])
+testSetsEqual(AllSubsets([1, 2, 3]), [[], [1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]]) //function with assert
 
+
+//gets a function f and an array A as parameter.
+//returns the concatenation of all the arrays returned by f when it is applied to each element in A.
 const flatmap : <T1, T2>(func : (value : T1) => T2  , array: T1[][])=> T2[] = (func , array) => {
     if (isNullOrUndefined(array))
         return []
@@ -279,6 +288,8 @@ const flatmap : <T1, T2>(func : (value : T1) => T2  , array: T1[][])=> T2[] = (f
         .reduce((acc,curVal)=> acc.concat(curVal),[])
 }
 
+
+//TESTS
 assert.deepEqual(flatmap((x) => x.toUpperCase(), [['a', 'b'] ,[ 'c', 'd']]), ['A', 'B', 'C', 'D'])
 assert.deepEqual(flatmap((x) => x[0].toString(), [[[1,2], [3,4]], [[5,6], [7,8]]]), ['1', '3', '5', '7'])
 assert.deepEqual(flatmap((x) => x, []), [], "flatmap of an empty set should be an empty set")
@@ -305,8 +316,9 @@ interface movieList {
    videos : video[] ;
 };
 
-let a : movieList = {name : undefined, videos : undefined}
-
+//gets a type similar to movieLists
+// returns a map {id, title, boxart} for every video in the movieLists
+// such that the boxart property in the result will be the url of the boxart object with dimensions of 150x200px.
 const getBoxarts:(movieLists:movieList[]) => {id: number, title: string ,boxart: string}[] = (movieLists)=>{
     if (isNullOrUndefined(movieLists))
         return []
@@ -329,6 +341,8 @@ const getBoxarts:(movieLists:movieList[]) => {id: number, title: string ,boxart:
         ({id: video.id, title:video.title, boxart: video.boxart.url}))
 }
 
+
+//var definiton
 let movieLists = [
     {
         name: "Instant Queue",
