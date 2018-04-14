@@ -1,9 +1,8 @@
-import { type } from "os";
-const assert = require('assert');
-//const map = require('map')
+import { isNullOrUndefined } from "util";
+import { stringify } from "querystring";
 
-let str1 = "1"
-let str2 = 1
+  
+const assert = require('assert');
 
 interface BinTree {
     root: number;
@@ -12,49 +11,97 @@ interface BinTree {
 };
 
 
-let child : {children: [{name: string},{age: number}]} = {children: [{name: 'john'}, {age:12}, {name: 'john'}, {name: 'john'}, {name: 'john'}, {name: 'john'}]}
-//let a : {children: ({name : string} | {age: number})[]} = {children: [{name:"1"}, {age:22}, {name:"2"}]} 
-type doubleFunc<T> = {<T>(x : T):T }
-//let bb : {<T>(x : doubleFunc<T>, l : T[]): T[] } = (f, l) => map((x)=>f(f(x)), l);
-
 const TreePreArray : (tree : BinTree) => number[] = (tree) => {
-    if (tree == undefined)
+    if (isNullOrUndefined(tree)) //changed this
         return []
     
-    let leftVisit = (tree.left !== undefined ? TreePreArray(tree.left) : [] )
-    let rightVisit = (tree.right !== undefined ? TreePreArray(tree.right) : [] )     
+    let leftVisit = (!(isNullOrUndefined(tree.left)) ? TreePreArray(tree.left) : [] )
+    let rightVisit = (!(isNullOrUndefined(tree.right)) ? TreePreArray(tree.right) : [] )     
     
     return [tree.root].concat(leftVisit).concat(rightVisit)
 };
 
 const TreeInArray : (tree : BinTree) => number[] = (tree) => {
-    if (tree == undefined)
+    if (isNullOrUndefined(tree))
         return []
     
-    let leftVisit = (tree.left != undefined ? TreePreArray(tree.left) : [] )
-    let rightVisit = (tree.right != undefined ? TreePreArray(tree.right) : [] )     
+    let leftVisit = (!(isNullOrUndefined(tree.left)) ? TreeInArray(tree.left) : [] )
+    let rightVisit = (!(isNullOrUndefined(tree.right)) ? TreeInArray(tree.right) : [] )     
     
     return leftVisit.concat([tree.root]).concat(rightVisit)
 };
 
 const TreePostArray : (tree : BinTree) => number[] = (tree) => {
-    if (tree == undefined)
+    if (isNullOrUndefined(tree))
         return []
     
-    let leftVisit = (tree.left != undefined ? TreePreArray(tree.left) : [] )
-    let rightVisit = (tree.right != undefined ? TreePreArray(tree.right) : [] )     
+    let leftVisit = (!(isNullOrUndefined(tree.left)) ? TreePostArray(tree.left) : [] )
+    let rightVisit = (!(isNullOrUndefined(tree.right)) ? TreePostArray(tree.right) : [] )     
     
     return leftVisit.concat(rightVisit).concat([tree.root])
 };
 
 
-let myTree = {root:10, left :{root:5}, right : {root:3} }
-console.log(TreePreArray(myTree))
-console.log(TreePreArray(null))
-console.log(TreePreArray(undefined))
+let myTree = {root:10,
+              left :{root:5,
+                     left:{root:8}
+                    },
+              right : {root:7,
+                       left:{root:9},
+                       right:{root:2,
+                              left:{root:1},
+                              right:{root:12}
+                            }
+                        }
+            }
 
+let myTree2 = undefined
+let myTree3 = null
+let myTree4 = {root:5}
+let myTree5 = {root:5,
+                left :{root:1}
+             }
 
-//TO DO: tests
+let myTree6 = {root:5,
+               right :{root:3}
+             }
+let myTree7 = {root:5,
+               left : {root:1},
+               right :{root:3}
+              }
+ 
+              
+//Tests Pre Order Traversal
+assert.deepEqual(TreePreArray(myTree),[ 10, 5, 8, 7, 9, 2, 1, 12 ], 
+                "failed - the printed array is not in the correct order")
+assert.deepEqual(TreePreArray(myTree2),[], "failed - pre order traversal on undefined should be []")
+assert.deepEqual(TreePreArray(myTree3),[], "failed - pre order traversal on undefined should be []")
+assert.deepEqual(TreePreArray(myTree4),[5], "failed - pre order traversal on binTree with only root should be [root]")
+assert.deepEqual(TreePreArray(myTree5),[5, 1], "failed - pre order traversal is not correcrt")
+assert.deepEqual(TreePreArray(myTree6),[5, 3], "failed - pre order traversal is not correcrt")
+assert.deepEqual(TreePreArray(myTree7),[5, 1, 3], "failed - pre order traversal is not correcrt")
+
+//Tests In Order Traversal
+assert.deepEqual(TreeInArray(myTree),[ 8, 5, 10, 9, 7, 1, 2, 12 ], 
+                "failed - the printed array is not in the correct order") 
+assert.deepEqual(TreeInArray(myTree2),[], "failed - in order traversal on undefined should be []")
+assert.deepEqual(TreeInArray(myTree3),[], "failed - in order traversal on undefined should be []")
+assert.deepEqual(TreeInArray(myTree4),[5], "failed - in order traversal on binTree with only root should be [root]") 
+assert.deepEqual(TreeInArray(myTree5),[1, 5], "failed - post order traversal is not correcrt")
+assert.deepEqual(TreeInArray(myTree6),[5, 3], "failed - post order traversal is not correcrt")
+assert.deepEqual(TreeInArray(myTree7),[1, 5, 3], "failed - post order traversal is not correcrt")
+
+//Tests Post Order Traversal
+
+assert.deepEqual(TreePostArray(myTree),[ 8, 5, 9, 1, 12, 2, 7, 10 ], 
+                "failed - the printed array is not in the correct order")
+assert.deepEqual(TreePostArray(myTree2),[], "failed - post order traversal on undefined should be []")
+assert.deepEqual(TreePostArray(myTree3),[], "failed - post order traversal on undefined should be []") 
+assert.deepEqual(TreePostArray(myTree4),[5], "failed - post order traversal on binTree with only root should be [root]")
+assert.deepEqual(TreePostArray(myTree5),[1, 5], "failed - post order traversal is not correcrt")
+assert.deepEqual(TreePostArray(myTree6),[3, 5], "failed - post order traversal is not correcrt")
+assert.deepEqual(TreePostArray(myTree7),[1, 3, 5], "failed - post order traversal is not correcrt")
+
 
 
 interface GBinTree<T> {
@@ -65,34 +112,96 @@ interface GBinTree<T> {
 
 
 const GBinTreePreArray: <T>(tree : GBinTree<T>) => T[] = (tree) => {
-    if (tree == undefined)
+    if (isNullOrUndefined(tree))
         return []
     
-    let leftVisit = (tree.left != undefined ? GBinTreePreArray(tree.left) : [] )
-    let rightVisit = (tree.right != undefined ? GBinTreePreArray(tree.right) : [] )     
+    let leftVisit = (!(isNullOrUndefined(tree.left)) ? GBinTreePreArray(tree.left) : [] )
+    let rightVisit = (!(isNullOrUndefined(tree.right)) ? GBinTreePreArray(tree.right) : [] )     
     
     return [tree.root].concat(leftVisit).concat(rightVisit)
 };
 
 const GBinTreeInArray : <T>(tree : GBinTree<T>) => T[] = (tree) => {
-    if (tree == undefined)
+    if (isNullOrUndefined(tree))
         return []
     
-    let leftVisit = (tree.left != undefined ? GBinTreeInArray(tree.left) : [] )
-    let rightVisit = (tree.right != undefined ? GBinTreeInArray(tree.right) : [] )     
+    let leftVisit = (!(isNullOrUndefined(tree.left)) ? GBinTreeInArray(tree.left) : [] )
+    let rightVisit = (!(isNullOrUndefined(tree.right)) ? GBinTreeInArray(tree.right) : [] )     
     
     return leftVisit.concat([tree.root]).concat(rightVisit)
 };
 
 const GBinTreePostArray :<T> (tree : GBinTree<T>) => T[] = (tree) => {
-    if (tree == undefined)
+    if (isNullOrUndefined(tree))
         return []
     
-    let leftVisit = (tree.left != undefined ? GBinTreePostArray(tree.left) : [] )
-    let rightVisit = (tree.right != undefined ?  GBinTreePostArray(tree.right) : [] )     
+    let leftVisit = (!(isNullOrUndefined(tree.left)) ? GBinTreePostArray(tree.left) : [] )
+    let rightVisit = (!(isNullOrUndefined(tree.right)) ?  GBinTreePostArray(tree.right) : [] )     
     
     return leftVisit.concat(rightVisit).concat([tree.root])
 };
+
+let myTree8 = {root:'a',
+    left :{root:'b',
+           left:{root:'d'}
+          },
+    right : {root:'c',
+             left:{root:'e'},
+             right:{root:'f',
+                    left:{root:'g'},
+                    right:{root:'h'}
+                  }
+              }
+  }
+
+let myTree9 = undefined
+let myTree10 = null
+let myTree11 = {root:'a'}
+let myTree12 = {root:'a',
+      left :{root:'b'}
+   }
+
+let myTree13 = {root:'a',
+     right :{root:'c'}
+   }
+let myTree14 = {root:'a',
+     left : {root:'b'},
+     right :{root:'c'}
+    }
+
+
+//Tests Pre Order Traversal
+console.log(GBinTreePreArray(myTree8))
+assert.deepEqual(GBinTreePreArray(myTree8),[ 'a', 'b', 'd', 'c', 'e', 'f', 'g', 'h'], 
+                "failed - the printed array is not in the correct order")
+assert.deepEqual(GBinTreePreArray(myTree9),[], "failed - pre order traversal on undefined should be []")
+assert.deepEqual(GBinTreePreArray(myTree10),[], "failed - pre order traversal on undefined should be []")
+assert.deepEqual(GBinTreePreArray(myTree11),['a'], "failed - pre order traversal on binTree with only root should be [root]")
+assert.deepEqual(GBinTreePreArray(myTree12),['a', 'b'], "failed - pre order traversal is not correcrt")
+assert.deepEqual(GBinTreePreArray(myTree13),['a', 'c'], "failed - pre order traversal is not correcrt")
+assert.deepEqual(GBinTreePreArray(myTree14),['a', 'b', 'c'], "failed - pre order traversal is not correcrt")
+
+//Tests In Order Traversal
+assert.deepEqual(GBinTreeInArray(myTree8),[ 'd', 'b', 'a', 'e', 'c', 'g', 'f', 'h' ], 
+                "failed - the printed array is not in the correct order") 
+assert.deepEqual(GBinTreeInArray(myTree9),[], "failed - in order traversal on undefined should be []")
+assert.deepEqual(GBinTreeInArray(myTree10),[], "failed - in order traversal on undefined should be []")
+assert.deepEqual(GBinTreeInArray(myTree11),['a'], "failed - in order traversal on binTree with only root should be [root]") 
+assert.deepEqual(GBinTreeInArray(myTree12),['b', 'a'], "failed - post order traversal is not correcrt")
+assert.deepEqual(GBinTreeInArray(myTree13),['a', 'c'], "failed - post order traversal is not correcrt")
+assert.deepEqual(GBinTreeInArray(myTree14),['b', 'a', 'c'], "failed - post order traversal is not correcrt")
+
+//Tests Post Order Traversal
+
+assert.deepEqual(GBinTreePostArray(myTree8),[ 'd', 'b', 'e', 'g', 'h', 'f', 'c', 'a' ], 
+                "failed - the printed array is not in the correct order")
+assert.deepEqual(GBinTreePostArray(myTree9),[], "failed - post order traversal on undefined should be []")
+assert.deepEqual(GBinTreePostArray(myTree10),[], "failed - post order traversal on undefined should be []") 
+assert.deepEqual(GBinTreePostArray(myTree11),['a'], "failed - post order traversal on binTree with only root should be [root]")
+assert.deepEqual(GBinTreePostArray(myTree12),['b', 'a'], "failed - post order traversal is not correcrt")
+assert.deepEqual(GBinTreePostArray(myTree13),['c', 'a'], "failed - post order traversal is not correcrt")
+assert.deepEqual(GBinTreePostArray(myTree14),['b', 'c', 'a'], "failed - post order traversal is not correcrt")
+
 
 const KSubsets : <T>(array: any[], subsetSize : number) => T[][]= (array, subsetSize) => {
     if (array.length < subsetSize) //check in Forum
@@ -136,10 +245,6 @@ const flatmap : <T1, T2>(func : (value : T1) => T2  , array: T1[][])=> T2[] = (f
     return array.map((subarray) => subarray.map(func))
         .reduce((acc,curVal)=> acc.concat(curVal),[])
 }
-
-console.log(flatmap((x) => x.toUpperCase(), [['a', 'b'] ,[ 'c', 'd']]))
-console.log(flatmap((x) => x[0].toString(), [[[1,2], [3,4]], [[5,6], [7,8]]]))
-
 
 interface boxart {
     width:number
