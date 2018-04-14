@@ -158,12 +158,19 @@ assert.deepEqual(AllSubsets(undefined), [[]], "Empty set has no subsets")
 testSetsEqual(AllSubsets([1, 2, 3]), [[], [1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]])
 
 const flatmap : <T1, T2>(func : (value : T1) => T2  , array: T1[][])=> T2[] = (func , array) => {
+    if (isNullOrUndefined(array))
+        return []
+        
     return array.map((subarray) => subarray.map(func))
         .reduce((acc,curVal)=> acc.concat(curVal),[])
 }
 
-console.log(flatmap((x) => x.toUpperCase(), [['a', 'b'] ,[ 'c', 'd']]))
-console.log(flatmap((x) => x[0].toString(), [[[1,2], [3,4]], [[5,6], [7,8]]]))
+assert.deepEqual(flatmap((x) => x.toUpperCase(), [['a', 'b'] ,[ 'c', 'd']]), ['A', 'B', 'C', 'D'])
+assert.deepEqual(flatmap((x) => x[0].toString(), [[[1,2], [3,4]], [[5,6], [7,8]]]), ['1', '3', '5', '7'])
+assert.deepEqual(flatmap((x) => x, []), [], "flatmap of an empty set should be an empty set")
+assert.deepEqual(flatmap((x) => x, [[], [], []]), [], "flatmap of an set of empty sets should be an empty set")
+assert.deepEqual(flatmap((x) => x, null), [], "flatmap of null of empty sets should be an empty set")
+assert.deepEqual(flatmap((x) => x, undefined), [], "flatmap of undefined of empty sets should be an empty set")
 
 
 interface boxart {
